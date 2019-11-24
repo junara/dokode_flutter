@@ -11,7 +11,7 @@ description: Official client for dokode.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -24,7 +24,6 @@ dependencies:
   json_annotation: any
   url_launcher: any
   font_awesome_flutter: any
-  firebase_messaging: any
   share: any
   http: any
 
@@ -38,3 +37,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "images/icon/icon.png"

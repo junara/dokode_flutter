@@ -8,6 +8,8 @@ class EventRepository {
   final String thumbnailLarge;
   final String venueName;
   final String displayStartAt;
+  final String organizer;
+  final String organizerAffiliation;
 
   EventRepository.fromJson(Map<String, dynamic> json)
       : name = json['name'],
@@ -17,6 +19,8 @@ class EventRepository {
         thumbnailSmall = json['thumbnail_small'],
         thumbnailLarge = json['thumbnail_large'],
         displayStartAt = json['display_start_at'],
+        organizer = json['organizer'],
+        organizerAffiliation= json['organizer_affiliation'],
         placeId = json['venues'][0]['place_id'],
         venueName = json['venues'][0]['name'];
 }

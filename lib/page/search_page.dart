@@ -1,17 +1,17 @@
-import "dart:async";
 import 'package:flutter/material.dart';
 import "package:dokode_flutter/repository/event_repository.dart";
-import "package:http/http.dart" as http;
-import "dart:convert";
 import "package:dokode_flutter/page/event_detail_page.dart";
 
-class SearchPage extends StatefulWidget {
-  @override
-  _SearchPageState createState() => _SearchPageState();
-}
+class SearchPage extends StatelessWidget {
+  SearchPage({@required this.events, @required this.handleSearch});
 
-class _SearchPageState extends State<SearchPage> {
-  List<EventRepository> _events = [];
+  final List<EventRepository> events;
+  final Function handleSearch;
+  final TextEditingController _controller = TextEditingController();
+
+  void _handleSearch() {
+    handleSearch(_controller.text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,68 +20,50 @@ class _SearchPageState extends State<SearchPage> {
         title: Text('検索'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _searchRepositories('tet').then((events) {
-            setState(() {
-              _events = events;
-            });
-          });
-        },
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
+        onPressed: _handleSearch,
+        tooltip: 'Search',
+        child: Icon(Icons.search),
       ),
-      body:
-          Column(children: [Text('学会検索'), Flexible(child: _buildEventList())]),
+      body: Column(children: [
+        Text('学会検索'),
+        TextField(
+          decoration: const InputDecoration(
+            hintText: '医',
+            labelText: 'キーワード',
+          ),
+          maxLines: 1,
+          controller: _controller,
+        ),
+        Flexible(child: _buildEventList(context))
+      ]),
     );
   }
 
-  Widget _buildEventList() {
-    if (_events.length == 0) {
+  Widget _buildEventList(BuildContext context) {
+    if (events.length == 0) {
       return Container();
     }
     return ListView.builder(
-        itemCount: _events.length,
+        itemCount: events.length,
         itemBuilder: (BuildContext context, int index) {
-          final event = _events[index];
-          return _buildCard(event);
+          final event = events[index];
+          return _buildCard(event, context);
         });
   }
 
-  Widget _buildCard(EventRepository event) {
+  Widget _buildCard(EventRepository event, BuildContext context) {
     return Card(
         child: FlatButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                 return EventDetailPage(event);
               }));
             },
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                      child: Column(children: [
-                    Text(event.name),
-                    Text(event.displayStartAt),
-                    Text(event.venueName),
-                    Text(event.url != null ? event.url : ''),
-                  ])),
-                  Image.network(
-                    event.thumbnailSmall,
-                  ),
-                ])));
-  }
-}
-
-Future<List<EventRepository>> _searchRepositories(String searchWord) async {
-  final response = await http.get('https://www.dokode.work/api/v1/events');
-  if (response.statusCode == 200) {
-    List<EventRepository> list = [];
-    Map<String, dynamic> decoded = json.decode(response.body);
-    for (var event in decoded['events']) {
-      list.add(EventRepository.fromJson(event));
-    }
-    return list;
-  } else {
-    throw Exception('Fail to search repository');
+            child: ListTile(
+              leading: Image.network(event.thumbnailSmall),
+              title: Text(event.name),
+              subtitle: Text(event.venueName),
+              trailing: Icon(Icons.arrow_forward_ios),
+            )));
   }
 }

@@ -24,7 +24,17 @@ class EventDetailPage extends StatelessWidget {
               child: Container(child: Text(event.name))),
           Image.network(
             event.thumbnailLarge,
-          )
+          ),
+          ListTile(
+            title: Text(event.displayStartAt),
+            subtitle: Text(event.venueName),
+          ),
+          ListTile(
+            title: Text(event.organizer != null ? event.organizer : '情報なし'),
+            subtitle: Text(event.organizerAffiliation != null
+                ? event.organizerAffiliation
+                : '情報なし'),
+          ),
         ]));
   }
 }

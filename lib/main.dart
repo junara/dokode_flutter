@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import "package:dokode_flutter/repository/event_repository.dart";
 import "package:dokode_flutter/page/search_page.dart";
 import "package:dokode_flutter/page/about_page.dart";
-import "package:dokode_flutter/page/favorite_page.dart";
+import "package:dokode_flutter/api/search_client.dart";
 
 void main() => runApp(MyApp());
 
@@ -46,7 +46,6 @@ class _MainPageState extends State<MainPage> {
             title: Text("SEARCH"),
             icon: Icon(Icons.search),
           ),
-          BottomNavigationBarItem(title: Text("STAR"), icon: Icon(Icons.stars)),
           BottomNavigationBarItem(
             title: Text("ABOUT"),
             icon: Icon(Icons.event_note),
@@ -63,13 +62,20 @@ class _MainPageState extends State<MainPage> {
   Widget _buildPage() {
     switch (_currentIndex) {
       case 0:
-        return SearchPage();
+        return SearchPage(events: _events, handleSearch: _handleSearch);
       case 1:
-        return FavoritePage();
-      case 2:
         return AboutPage();
       default:
         return Text("No page");
     }
+  }
+
+  void _handleSearch(String searchWord) {
+    var searchClient = SearchClient();
+    searchClient.search(searchWord).then((events) {
+      setState(() {
+        _events = events;
+      });
+    });
   }
 }
